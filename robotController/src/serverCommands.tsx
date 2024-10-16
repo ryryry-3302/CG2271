@@ -41,7 +41,17 @@ export const turnRight = () => {
   return sendCommand('steerright');
 };
 
+export const stopMoving = () => {
+  console.log('Stopping movement');
+  return sendCommand('stopmoving');
+};
+
+export const stopTurning = () => {
+  console.log('Stopping turning');
+  return sendCommand('stopturning');
+};
+
 export const stop = () => {
-  console.log('Stopping');
-  return sendCommand('stop');
+  console.log('Stopping all movement');
+  return Promise.all([stopMoving(), stopTurning()]);
 };

@@ -122,10 +122,16 @@ void loop() {
     response = "Steering right";
     Serial2.write(0x32);
   }
-  if(req.indexOf("stop") != -1)
+  if(req.indexOf("stopturning") != -1)
   {
     digitalWrite(output26, HIGH);
-    response = "Stopped";
+    response = "Stopped turning";
+    Serial2.write(0x35);
+  }
+  if(req.indexOf("stopmoving") != -1)
+  {
+    digitalWrite(output26, HIGH);
+    response = "Stopped moving";
     Serial2.write(0x35);
   }
   if(req.indexOf("music") != -1)
