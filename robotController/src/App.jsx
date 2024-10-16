@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import './App.css'
 import { moveForward, moveBackward, turnLeft, turnRight, stop } from './serverCommands'
 const KEY_FORWARD = ['ArrowUp', 'w', 'W']
@@ -9,55 +9,61 @@ const KEY_STOP = ' ' // Space key
 
 function App() {
   const [currentAction, setCurrentAction] = useState('Stopped')
+  const pressedKeys = useRef(new Set())
 
   useEffect(() => {
     const handleKeyDown = (event) => {
-      if (KEY_FORWARD.includes(event.key)) {
-        moveForward()
-        setCurrentAction('Moving Forward')
-      } else if (KEY_BACKWARD.includes(event.key)) {
-        moveBackward()
-        setCurrentAction('Moving Backward')
-      } else if (KEY_LEFT.includes(event.key)) {
-        turnLeft()
-        setCurrentAction('Turning Left')
-      } else if (KEY_RIGHT.includes(event.key)) {
-        turnRight()
-        setCurrentAction('Turning Right')
-      } else if (event.key === KEY_STOP) {
+      pressedKeys.current.add(event.key)
+      updateAction()
+    }
+
+    const handleKeyUp = (event) => {
+      pressedKeys.current.delete(event.key)
+      updateAction()
+    }
+
+    const updateAction = () => {
+      const keys = pressedKeys.current
+      if (keys.size === 0) {
         stop()
         setCurrentAction('Stopped')
+      } else {
+        let actions = []
+        if (keys.has('ArrowUp') || keys.has('w') || keys.has('W')) {
+          moveForward()
+          actions.push('Moving Forward')
+        }
+        if (keys.has('ArrowDown') || keys.has('s') || keys.has('S')) {
+          moveBackward()
+          actions.push('Moving Backward')
+        }
+        if (keys.has('ArrowLeft') || keys.has('a') || keys.has('A')) {
+          turnLeft()
+          actions.push('Turning Left')
+        }
+        if (keys.has('ArrowRight') || keys.has('d') || keys.has('D')) {
+          turnRight()
+          actions.push('Turning Right')
+        }
+        setCurrentAction(actions.join(', '))
       }
     }
 
     window.addEventListener('keydown', handleKeyDown)
+    window.addEventListener('keyup', handleKeyUp)
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
+      window.removeEventListener('keyup', handleKeyUp)
     }
   }, [])
 
-  const handleMoveForward = () => {
-    moveForward()
-    setCurrentAction('Moving Forward')
+  const handleButtonDown = (action, actionName) => {
+    action()
+    setCurrentAction(actionName)
   }
 
-  const handleMoveBackward = () => {
-    moveBackward()
-    setCurrentAction('Moving Backward')
-  }
-
-  const handleTurnLeft = () => {
-    turnLeft()
-    setCurrentAction('Turning Left')
-  }
-
-  const handleTurnRight = () => {
-    turnRight()
-    setCurrentAction('Turning Right')
-  }
-
-  const handleStop = () => {
+  const handleButtonUp = () => {
     stop()
     setCurrentAction('Stopped')
   }
@@ -69,13 +75,17 @@ function App() {
           <div className="flex flex-row space-x-4">
             <button 
               className="bg-white hover:bg-gray-100 text-gray-800 font-bold py-8 px-8 rounded-full shadow text-4xl"
-              onClick={handleTurnLeft}
+              onMouseDown={() => handleButtonDown(turnLeft, 'Turning Left')}
+              onMouseUp={handleButtonUp}
+              onMouseLeave={handleButtonUp}
             >
               &#8592;
             </button>
             <button 
               className="bg-white hover:bg-gray-100 text-gray-800 font-bold py-8 px-8 rounded-full shadow text-4xl"
-              onClick={handleTurnRight}
+              onMouseDown={() => handleButtonDown(turnRight, 'Turning Right')}
+              onMouseUp={handleButtonUp}
+              onMouseLeave={handleButtonUp}
             >
               &#8594;
             </button>
@@ -86,19 +96,23 @@ function App() {
           <div className="flex flex-col space-y-4">
             <button 
               className="bg-white hover:bg-gray-100 text-gray-800 font-bold py-8 px-8 rounded-full shadow text-4xl"
-              onClick={handleMoveForward}
+              onMouseDown={() => handleButtonDown(moveForward, 'Moving Forward')}
+              onMouseUp={handleButtonUp}
+              onMouseLeave={handleButtonUp}
             >
               &#8593;
             </button>
             <button 
               className="bg-white hover:bg-gray-100 text-gray-800 font-bold py-8 px-8 rounded-full shadow text-4xl"
-              onClick={handleStop}
+              onClick={() => handleButtonDown(stop, 'Stopped')}
             >
               STOP
             </button>
             <button 
               className="bg-white hover:bg-gray-100 text-gray-800 font-bold py-8 px-8 rounded-full shadow text-4xl"
-              onClick={handleMoveBackward}
+              onMouseDown={() => handleButtonDown(moveBackward, 'Moving Backward')}
+              onMouseUp={handleButtonUp}
+              onMouseLeave={handleButtonUp}
             >
               &#8595;
             </button>

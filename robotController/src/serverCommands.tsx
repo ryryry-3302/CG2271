@@ -3,12 +3,21 @@ import axios from 'axios';
 const BASE_URL = 'http://192.168.27.189'; // Replace with your ESP32 server IP
 
 export const sendCommand = async (command) => {
-  try {
-    const response = await axios.get(`${BASE_URL}/${command}`);
-    return response.data;
-  } catch (error) {
-    console.error('Error sending command:', error);
-    throw error;
+  let attempts = 0;
+  const maxAttempts = 10;
+  while (attempts < maxAttempts) {
+    try {
+      const response = await axios.get(`${BASE_URL}/${command}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error sending command (attempt ${attempts + 1}):`, error);
+      attempts++;
+      if (attempts === maxAttempts) {
+        throw error;
+      }
+      // Wait for a short time before retrying
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
   }
 };
 
