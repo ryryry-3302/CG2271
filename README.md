@@ -9,3 +9,17 @@ are for reference only. You can choose your own names.
 - tAudio: Provide Audio Output
 - Serial_ISR: The Serial Data received by the ESP32 device. The serial data MUST be captured through
 the use of Interrupts.
+
+# Pinout
+## Motor Driver
+1side
+PTA1 2
+PTA2 4
+
+the other side
+PTA4 10
+PTA5 12
+
+## UART
+PTD2 RX 8
+PTD3 TX 10
