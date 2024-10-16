@@ -13,13 +13,16 @@ the use of Interrupts.
 # Pinout
 ## Motor Driver
 1side
-PTA1 2
-PTA2 4
+PTA1 2 Green
+PTA2 4 Blue
 
 the other side
-PTA4 10
-PTA5 12
+PTA4 10 Purple
+PTA5 12 Grey
 
 ## UART
-PTD2 RX 8
-PTD3 TX 10
+PTD2 RX 8 yellow tx on esp
+PTD3 TX 10 orange rx on esp
+
+## Buzzer
+PTA12 8 white
