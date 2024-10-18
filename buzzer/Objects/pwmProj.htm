@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\Objects\pwmProj.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\pwmProj.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Thu Oct 17 10:02:17 2024
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Fri Oct 18 18:15:50 2024
 <BR><P>
 <H3>Maximum Stack Usage =        244 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -40,7 +40,7 @@ Function Pointers
  <LI><a href="#[1]">NMI_Handler</a> from startup_mkl25z4.o(.text) referenced from startup_mkl25z4.o(RESET)
  <LI><a href="#[1c]">PIT_IRQHandler</a> from startup_mkl25z4.o(.text) referenced from startup_mkl25z4.o(RESET)
  <LI><a href="#[24]">PORTA_IRQHandler</a> from startup_mkl25z4.o(.text) referenced from startup_mkl25z4.o(RESET)
- <LI><a href="#[25]">PORTD_IRQHandler</a> from startup_mkl25z4.o(.text) referenced from startup_mkl25z4.o(RESET)
+ <LI><a href="#[25]">PORTD_IRQHandler</a> from pwm.o(i.PORTD_IRQHandler) referenced from startup_mkl25z4.o(RESET)
  <LI><a href="#[4]">PendSV_Handler</a> from startup_mkl25z4.o(.text) referenced from startup_mkl25z4.o(RESET)
  <LI><a href="#[1a]">RTC_IRQHandler</a> from startup_mkl25z4.o(.text) referenced from startup_mkl25z4.o(RESET)
  <LI><a href="#[1b]">RTC_Seconds_IRQHandler</a> from startup_mkl25z4.o(.text) referenced from startup_mkl25z4.o(RESET)
@@ -179,9 +179,6 @@ Global Symbols
 <P><STRONG><a name="[24]"></a>PORTA_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_mkl25z4.o(.text))
 <BR>[Address Reference Count : 1]<UL><LI> startup_mkl25z4.o(RESET)
 </UL>
-<P><STRONG><a name="[25]"></a>PORTD_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_mkl25z4.o(.text))
-<BR>[Address Reference Count : 1]<UL><LI> startup_mkl25z4.o(RESET)
-</UL>
 <P><STRONG><a name="[1a]"></a>RTC_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_mkl25z4.o(.text))
 <BR>[Address Reference Count : 1]<UL><LI> startup_mkl25z4.o(RESET)
 </UL>
@@ -262,6 +259,9 @@ Global Symbols
 
 <P><STRONG><a name="[41]"></a>__scatterload_rt2</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, init.o(.text), UNUSED)
 
+<P><STRONG><a name="[25]"></a>PORTD_IRQHandler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, pwm.o(i.PORTD_IRQHandler))
+<BR>[Address Reference Count : 1]<UL><LI> startup_mkl25z4.o(RESET)
+</UL>
 <P><STRONG><a name="[30]"></a>SystemCoreClockUpdate</STRONG> (Thumb, 372 bytes, Stack size 16 bytes, system_mkl25z4.o(i.SystemCoreClockUpdate))
 <BR><BR>[Stack]<UL><LI>Max Depth = 28<LI>Call Chain = SystemCoreClockUpdate &rArr; __aeabi_uidivmod
 </UL>
@@ -282,6 +282,12 @@ Global Symbols
 <P><STRONG><a name="[43]"></a>__scatterload_null</STRONG> (Thumb, 2 bytes, Stack size unknown bytes, handlers.o(i.__scatterload_null), UNUSED)
 
 <P><STRONG><a name="[44]"></a>__scatterload_zeroinit</STRONG> (Thumb, 14 bytes, Stack size unknown bytes, handlers.o(i.__scatterload_zeroinit), UNUSED)
+
+<P><STRONG><a name="[36]"></a>delay</STRONG> (Thumb, 18 bytes, Stack size 8 bytes, pwm.o(i.delay))
+<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = delay
+</UL>
+<BR>[Called By]<UL><LI><a href="#[33]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;playOdeToJoy
+</UL>
 
 <P><STRONG><a name="[26]"></a>main</STRONG> (Thumb, 20 bytes, Stack size 0 bytes, pwm.o(i.main))
 <BR><BR>[Stack]<UL><LI>Max Depth = 244<LI>Call Chain = main &rArr; playOdeToJoy &rArr; setFreq &rArr; __aeabi_idivmod &rArr; __aeabi_uidivmod
@@ -304,12 +310,6 @@ Global Symbols
 <P><STRONG><a name="[27]"></a>SystemInit</STRONG> (Thumb, 266 bytes, Stack size 0 bytes, system_mkl25z4.o(i.SystemInit))
 <BR>[Address Reference Count : 1]<UL><LI> startup_mkl25z4.o(.text)
 </UL>
-<P><STRONG><a name="[36]"></a>delay</STRONG> (Thumb, 1036 bytes, Stack size 8 bytes, pwm.o(i.delay))
-<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = delay
-</UL>
-<BR>[Called By]<UL><LI><a href="#[33]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;playOdeToJoy
-</UL>
-
 <P><STRONG><a name="[32]"></a>initPWM</STRONG> (Thumb, 156 bytes, Stack size 8 bytes, pwm.o(i.initPWM))
 <BR><BR>[Stack]<UL><LI>Max Depth = 52<LI>Call Chain = initPWM &rArr; setFreq &rArr; __aeabi_idivmod &rArr; __aeabi_uidivmod
 </UL>
