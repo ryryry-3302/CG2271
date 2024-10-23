@@ -1,5 +1,5 @@
 // Load Wi-Fi library
-#include <WiFi.h>
+#include <WiFi.h>                         
 
 #define RXD2 16
 #define TXD2 17
@@ -98,11 +98,12 @@ void loop() {
   int y_coord = req.substring(req.indexOf("y=")+2).toInt();
 
   digitalWrite(output26, HIGH);
-  shifted_y_coord = y_coord << 0; 
-  shifted_x_coord = x_coord << 3;
+  int shifted_y_coord = y_coord << 0; 
+  int shifted_x_coord = x_coord << 3;
 
-  x_y_encoding = shifted_y_coord | shifted_x_coord;  // Bitwise OR the shifted coordinates
+  int x_y_encoding = shifted_y_coord | shifted_x_coord;  // Bitwise OR the shifted coordinates
 
+  int buzzer_encoding;
   if(req.indexOf("buzzer") != -1)
   {
     digitalWrite(output26, HIGH);
@@ -112,12 +113,12 @@ void loop() {
     buzzer_encoding = 0 << 7;
   }
 
-  finalEncoding = x_y_encoding | buzzer_encoding;
+  int finalEncoding = x_y_encoding | buzzer_encoding;
 
 
   Serial2.write(finalEncoding);
-  serial.println("FINAL ENCODING BELOW:")   
-  Serial.println(finalEncoding)
+  Serial.println("FINAL ENCODING BELOW:");   
+  Serial.println(finalEncoding);
 
   /*
        if (req.indexOf("on12") != -1) {digitalWrite(LED12, HIGH); estado = "LED12 ON";}
