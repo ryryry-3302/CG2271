@@ -1,8 +1,68 @@
 #include "MKL25Z4.h"
 #include "cmsis_os2.h"
+#include "helpers.h"
 
 #define PTA12_Pin 12
 #define FREQ_2_MOD(x) (375000 / x)
+
+#define RED_LED 18 // PortB Pin 18
+#define GREEN_LED 19 // PortB Pin 19
+#define BLUE_LED 1 // PortD Pin 1
+#define MASK(x) (1 << (x))
+
+
+typedef enum {
+    RED,
+    GREEN,
+    BLUE
+} color_t;
+
+void InitGPIO(void)
+{
+	// Enable Clock to PORTB and PORTD
+	SIM->SCGC5 |= ((SIM_SCGC5_PORTB_MASK) | (SIM_SCGC5_PORTD_MASK));
+	
+	// Configure MUX settings to make all 3 pins GPIO
+	PORTB->PCR[RED_LED] &= ~PORT_PCR_MUX_MASK;
+	PORTB->PCR[RED_LED] |= PORT_PCR_MUX(1);
+	
+	PORTB->PCR[GREEN_LED] &= ~PORT_PCR_MUX_MASK;
+	PORTB->PCR[GREEN_LED] |= PORT_PCR_MUX(1);
+	
+	PORTD->PCR[BLUE_LED] &= ~PORT_PCR_MUX_MASK;
+	PORTD->PCR[BLUE_LED] |= PORT_PCR_MUX(1);
+	
+	// Set Data Direction Registers for PortB and PortD
+	PTB->PDDR |= (MASK(RED_LED) | MASK(GREEN_LED));
+	PTD->PDDR |= MASK(BLUE_LED);
+}
+
+void offRGB()
+{
+	//Pull the appropriate bits to 1, which turns off all the leds
+	PTB->PSOR |= MASK(RED_LED) | MASK(GREEN_LED);   //PSOR sets the bit to 1
+	PTD->PSOR |= MASK(BLUE_LED);              
+}
+
+void led_control(color_t color)
+{
+	offRGB();
+	switch(color)  //PCOR sets the bit to 0
+	{
+		case RED:  
+			PTB->PCOR |= MASK(RED_LED);
+			break;
+		
+		case GREEN:  
+			PTB->PCOR |= MASK(GREEN_LED);
+			break;
+		
+		case BLUE:  
+			PTD->PCOR |= MASK(BLUE_LED);
+			break;
+	}
+}
+
 
 typedef enum {
 		G3 = 196,
@@ -113,26 +173,33 @@ void playOdeToJoy() {
 
     // Play the melody
     for (int i = 0; i <63; i++) {
+				osSemaphoreAcquire(musicSem, osWaitForever);
         setFreq(melody[i]); // Set frequency for the current note
 
         // Adjust delay based on note duration for better cadence
-		switch(noteDurations[i]){
-				case QUARTER:
-						delay2(25000);
-						break;
-				case HALF:
-						delay2(50000);
-						break;
-				case EIGHTH:
-						delay2(12500);
-						break;
-				default:
-						// handle other cases if necessary
-						break;
-		}
+				led_control(RED);
+				switch(noteDurations[i]){
+						case QUARTER:
+								//delay2(25000);
+								osDelay(500);
+								break;
+						case HALF:
+								//delay2(50000);
+								osDelay(1000);
+								break;
+						case EIGHTH:
+								//delay2(12500);
+								osDelay(250);
+								break;
+						default:
+								// handle other cases if necessary
+								offRGB();
+								break;
+				}
 				TPM1_C0V = 0;
+				osSemaphoreRelease(musicSem);
+				osDelay(100);
         // Small pause between notes
-        delay2(1000);
     }
 }
 

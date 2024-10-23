@@ -65,6 +65,14 @@ void initMotors(){
 	TPM0_C2V = CALC_CNV(0);
 }
 
+void move(int x, int y){
+		TPM0_C4V = CALC_CNV(100); // Right Forward
+		TPM0_C5V = CALC_CNV(0); // Right Reverse
+		TPM0_C1V = CALC_CNV(50); // Left Reverse
+		TPM0_C2V = CALC_CNV(0); // Left Forward
+}
+
+/*
 int main(void)
 {
 	SystemCoreClockUpdate();
@@ -79,7 +87,7 @@ int main(void)
 		TPM0_C2V = CALC_CNV(0); // Left Forward
 	}
 }
-	
+*/
 		
 	
 
