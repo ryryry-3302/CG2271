@@ -393,9 +393,14 @@
               <FilePath>.\helpers.h</FilePath>
             </File>
             <File>
+              <FileName>motor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\motor\motor.c</FilePath>
+            </File>
+            <File>
               <FileName>pwm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\buzzer\pwm.c</FilePath>
+              <FilePath>.\pwm.c</FilePath>
             </File>
           </Files>
         </Group>
