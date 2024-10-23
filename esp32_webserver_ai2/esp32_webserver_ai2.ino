@@ -94,8 +94,8 @@ void loop() {
   // Serial.println(req);
 
   // Make the client's request.
-  int x_coord = int(req.substring(req.indexOf("x=")+2, req.indexOf("/y=")-1));
-  int y_coord = int(req.substring(req.indexOf("y=")+2));
+  int x_coord = req.substring(req.indexOf("x=")+2, req.indexOf("/y=")).toInt();
+  int y_coord = req.substring(req.indexOf("y=")+2).toInt();
 
   digitalWrite(output26, HIGH);
   shifted_y_coord = y_coord << 0; 
