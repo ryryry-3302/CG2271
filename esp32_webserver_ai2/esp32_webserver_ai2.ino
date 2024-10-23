@@ -15,7 +15,7 @@ WiFiServer server(80);
 String response, ip_address;
 
 // Auxiliar variables to store the current output state
-String output26State = "off";         
+String output26State = "off";               
 
 // Assign output variables to GPIO pins                       
 const int output26 = 26;
@@ -94,8 +94,8 @@ void loop() {
   // Serial.println(req);
 
   // Make the client's request.
-  x_coord = int(req.substring(req.indexOf("x=")+2, req.indexOf("/y=")-1));
-  y_coord = int(req.substring(req.indexOf("y=")+2));
+  int x_coord = int(req.substring(req.indexOf("x=")+2, req.indexOf("/y=")-1));
+  int y_coord = int(req.substring(req.indexOf("y=")+2));
 
   digitalWrite(output26, HIGH);
   shifted_y_coord = y_coord << 0; 
