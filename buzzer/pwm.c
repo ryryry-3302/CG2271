@@ -1,4 +1,7 @@
 #include "MKL25Z4.h"
+#include "RTE_Components.h"
+#include  CMSIS_device_header
+#include "cmsis_os2.h"
 
 #define PTA12_Pin 12
 #define FREQ_2_MOD(x) (375000 / x)
@@ -15,10 +18,7 @@ typedef enum {
 } C_Octave_Notes;
 
 void delay(volatile uint32_t duration) {
-		
-    while (duration--) {
-				__asm("NOP"); // No operation (just a placeholder to waste time)
-    }
+		osDelay(duration); // No operation (just a placeholder to waste time)
 }
 
 void setFreq(C_Octave_Notes note) {
@@ -111,13 +111,13 @@ void playOdeToJoy() {
         // Adjust delay based on note duration for better cadence
 		switch(noteDurations[i]){
 				case QUARTER:
-						delay(0x1FFFFF);
+						delay(500);
 						break;
 				case HALF:
-						delay(0x2FFFFF);
+						delay(1000);
 						break;
 				case EIGHTH:
-						delay(0xFFFFF);
+						delay(250);
 						break;
 				default:
 						// handle other cases if necessary
@@ -125,7 +125,7 @@ void playOdeToJoy() {
 		}
 				TPM1_C0V = 0;
         // Small pause between notes
-        delay(0x7FFFF);
+        delay(100);
     }
 }
 
