@@ -5,8 +5,8 @@
 #define TXD2 17
 
 // Replace with your network credentials
-const char* ssid = "AndroidAP8729";
-const char* password = "ywla6471";
+const char* ssid = "blueberry1";
+const char* password = "peepeepoopoo";
 
 // Set web server port number to 80
 WiFiServer server(80);
@@ -15,13 +15,13 @@ WiFiServer server(80);
 String response, ip_address;
 
 // Auxiliar variables to store the current output state
-String output26State = "off";
+String output26State = "off";         
 
-// Assign output variables to GPIO pins
+// Assign output variables to GPIO pins                       
 const int output26 = 26;
 
 // Current time
-unsigned long currentTime = millis();
+unsigned long currentTime = millis();       
 // Previous time
 unsigned long previousTime = 0; 
 // Define timeout time in milliseconds (example: 2000ms = 2s)
@@ -91,14 +91,31 @@ void loop() {
   /////////////////////////////////////////////////////
   // Read the information sent by the client.
   String req = client.readStringUntil('\r');
-  Serial.println(req);
+  // Serial.println(req);
 
   // Make the client's request.
   x_coord = int(req.substring(req.indexOf("x=")+2, req.indexOf("/y=")-1));
   y_coord = int(req.substring(req.indexOf("y=")+2));
 
   digitalWrite(output26, HIGH);
-  Serial2.write(x_coord);   
+  shifted_y_coord = y_coord << 0; 
+  shifted_x_coord = x_coord << 3;
+
+  x_y_encoding = shifted_y_coord | shifted_x_coord;  // Bitwise OR the shifted coordinates
+
+  if(req.indexOf("buzzer") != -1)
+  {
+    digitalWrite(output26, HIGH);
+    // response = "Stopped turning";
+    buzzer_encoding = 1 << 7;
+  } else {
+    buzzer_encoding = 0 << 7;
+  }
+
+  finalEncoding = x_y_encoding | buzzer_encoding;
+
+
+  Serial2.write(finalEncoding);   
 
 
   /*
