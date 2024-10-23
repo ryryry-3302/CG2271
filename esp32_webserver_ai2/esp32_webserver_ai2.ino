@@ -115,8 +115,9 @@ void loop() {
   finalEncoding = x_y_encoding | buzzer_encoding;
 
 
-  Serial2.write(finalEncoding);   
-
+  Serial2.write(finalEncoding);
+  serial.println("FINAL ENCODING BELOW:")   
+  Serial.println(finalEncoding)
 
   /*
        if (req.indexOf("on12") != -1) {digitalWrite(LED12, HIGH); estado = "LED12 ON";}
