@@ -1,4 +1,5 @@
 #include "MKL25Z4.h"
+#include "cmsis_os2.h"
 
 #define PTA12_Pin 12
 #define FREQ_2_MOD(x) (375000 / x)
@@ -14,11 +15,18 @@ typedef enum {
     B4 = 494
 } C_Octave_Notes;
 
-void delay(volatile uint32_t duration) {
-		
-    while (duration--) {
-				__asm("NOP"); // No operation (just a placeholder to waste time)
-    }
+
+void delay(volatile uint32_t nof) {
+  while(nof!=0) {
+    __asm("NOP");
+    nof--;
+  }
+}
+
+void delay2(volatile uint32_t nof) {
+  for(int i = 0; i < 100; i++) {
+    delay(nof);
+  }
 }
 
 void setFreq(C_Octave_Notes note) {
@@ -60,8 +68,7 @@ typedef enum {
     QUARTER = 2,
     HALF = 4
 } NoteDuration;
-void PORTD_IRQHandler(){
-}
+
 void playOdeToJoy() {
     // Sequence of notes for Ode to Joy in C major
     C_Octave_Notes melody[] = {
@@ -105,19 +112,19 @@ void playOdeToJoy() {
     // Note durations (1 = short, 2 = medium, 3 = long)
 
     // Play the melody
-    for (int i = 0; i < sizeof(melody) / sizeof(melody[0]); i++) {
+    for (int i = 0; i <63; i++) {
         setFreq(melody[i]); // Set frequency for the current note
 
         // Adjust delay based on note duration for better cadence
 		switch(noteDurations[i]){
 				case QUARTER:
-						delay(0x1FFFFF);
+						delay2(25000);
 						break;
 				case HALF:
-						delay(0x2FFFFF);
+						delay2(50000);
 						break;
 				case EIGHTH:
-						delay(0xFFFFF);
+						delay2(12500);
 						break;
 				default:
 						// handle other cases if necessary
@@ -125,19 +132,8 @@ void playOdeToJoy() {
 		}
 				TPM1_C0V = 0;
         // Small pause between notes
-        delay(0x7FFFF);
+        delay2(1000);
     }
 }
 
-int main(void) {
-    SystemCoreClockUpdate();
-    initPWM();  // Initialize PWM for PTA12
-    playOdeToJoy();
 
-    while (1) {
-        // Infinite loop to keep playing the note
-			playOdeToJoy();
-    }
-
-    return 0;
-}
