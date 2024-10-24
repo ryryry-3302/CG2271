@@ -43,9 +43,7 @@ void playOdeToJoy(void);
 
 //Motor Helpers
 void initMotors(void);
-void move(int x, int y);
+void move(int movedata);
+void stop(void);
 
 //Debug LEDs
-void InitGPIO(void);
-void offRGB(void);
-void led_control(color_t color);

@@ -29,16 +29,22 @@ void play_music_thread (void *argument) {
   // ...
   for (;;) {
 		playOdeToJoy();
-		led_control(GREEN);
+
 	}
 }
 
 void move_thread (void*argument) {
 	
 	  for (;;) {
-		//osSemaphoreAcquire(mySem, osWaitForever);	
+				for (int i =48; i<=63; i++){
+					move(i);
+					osDelay(300);
+					stop();
+					osDelay(4000);
+		
+				}
+
 		}
-		//osSemaphoreRelease(mySem);
 }
 
  
@@ -48,14 +54,13 @@ int main (void) {
   SystemCoreClockUpdate();
 	initPWM();
 	initMotors();
-	InitGPIO();
+	//InitGPIO();
   // 
 	musicSem = osSemaphoreNew(1, 1, NULL);
   osKernelInitialize();                 // Initialize CMSIS-RTOS
-	osThreadNew(play_music_thread, NULL, &priorityHigh);    // Create application main thread
-	osThreadNew(move_thread, NULL, NULL);  
+  osThreadNew(play_music_thread, NULL, &priorityHigh);    // Create application main thread
+	osThreadNew(move_thread, NULL, &priorityHigh);  
   osKernelStart();                      // Start thread execution
 	for (;;) {
-	offRGB();
 	}
 }

@@ -14,72 +14,49 @@
 #define BLUE_LED 1 // PortD Pin 1
 #define MASK(x) (1 << (x))
 
-
-
-void InitGPIO(void)
-{
-	// Enable Clock to PORTB and PORTD
-	SIM->SCGC5 |= ((SIM_SCGC5_PORTB_MASK) | (SIM_SCGC5_PORTD_MASK));
+C_Octave_Notes melody[] = {
+		E4, E4, F4, G4, G4, F4, E4, D4,
+		C4, C4, D4, E4, E4, D4, D4,
 	
-	// Configure MUX settings to make all 3 pins GPIO
-	PORTB->PCR[RED_LED] &= ~PORT_PCR_MUX_MASK;
-	PORTB->PCR[RED_LED] |= PORT_PCR_MUX(1);
+		E4, E4, F4, G4, G4, F4, E4, D4,
+		C4, C4, D4, E4, D4, C4, C4,
 	
-	PORTB->PCR[GREEN_LED] &= ~PORT_PCR_MUX_MASK;
-	PORTB->PCR[GREEN_LED] |= PORT_PCR_MUX(1);
+		D4, D4, E4, C4, D4, E4, F4, E4, C4,
+		D4, E4, F4, E4, D4, C4, D4, G3,
 	
-	PORTD->PCR[BLUE_LED] &= ~PORT_PCR_MUX_MASK;
-	PORTD->PCR[BLUE_LED] |= PORT_PCR_MUX(1);
+		E4, E4, F4, G4, G4, F4, E4, D4,
+		C4, C4, D4, E4, D4, C4, C4
+};
+
+NoteDuration noteDurations[] = {
+	QUARTER, QUARTER, QUARTER, QUARTER, // E4, E4, F4, G4
+	QUARTER, QUARTER, QUARTER, QUARTER, // G4, F4, E4, D4
+	QUARTER, QUARTER, QUARTER, QUARTER, // C4, C4, D4, E4
+	QUARTER, QUARTER, HALF,          // E4, D4, D4
+
+	QUARTER, QUARTER, QUARTER, QUARTER, // E4, E4, F4, G4
+	QUARTER, QUARTER, QUARTER, QUARTER, // G4, F4, E4, D4
+	QUARTER, QUARTER, QUARTER, QUARTER, // C4, C4, D4, E4
+	QUARTER, QUARTER, HALF,          // D4, C4, C4
+
+	QUARTER, QUARTER, QUARTER, QUARTER, // D4, D4, E4, C4
+	QUARTER, EIGHTH, EIGHTH, QUARTER, // D4, E4, F4, E4
+	QUARTER, QUARTER, EIGHTH, EIGHTH, QUARTER,  // C4, D4, E4, F4, E4, G3
+	QUARTER, QUARTER, QUARTER,QUARTER, //D4, C4, D4, G3,
 	
-	// Set Data Direction Registers for PortB and PortD
-	PTB->PDDR |= (MASK(RED_LED) | MASK(GREEN_LED));
-	PTD->PDDR |= MASK(BLUE_LED);
-}
-
-void offRGB()
-{
-	//Pull the appropriate bits to 1, which turns off all the leds
-	PTB->PSOR |= MASK(RED_LED) | MASK(GREEN_LED);   //PSOR sets the bit to 1
-	PTD->PSOR |= MASK(BLUE_LED);              
-}
-
-void led_control(color_t color)
-{
-	offRGB();
-	switch(color)  //PCOR sets the bit to 0
-	{
-		case RED:  
-			PTB->PCOR |= MASK(RED_LED);
-			break;
-		
-		case GREEN:  
-			PTB->PCOR |= MASK(GREEN_LED);
-			break;
-		
-		case BLUE:  
-			PTD->PCOR |= MASK(BLUE_LED);
-			break;
-	}
-}
+	
+	QUARTER, QUARTER, QUARTER, QUARTER, // E4, E4, F4, G4
+	QUARTER, QUARTER, QUARTER, QUARTER, // G4, F4, E4, D4
+	QUARTER, QUARTER, QUARTER, QUARTER, // C4, C4, D4, E4
+	QUARTER, QUARTER, HALF          // D4, C4, C4
+};
 
 
 
-void delay(volatile uint32_t nof) {
-  while(nof!=0) {
-    __asm("NOP");
-    nof--;
-  }
-}
-
-void delay2(volatile uint32_t nof) {
-  for(int i = 0; i < 100; i++) {
-    delay(nof);
-  }
-}
 
 void setFreq(C_Octave_Notes note) {
     TPM1->MOD = FREQ_2_MOD(note);
-    TPM1_C0V = (FREQ_2_MOD(note)) / 4;
+    TPM1_C0V = (FREQ_2_MOD(note)) / 12;
 }
 
 /* Initialize PWM */
@@ -114,42 +91,8 @@ void initPWM(void) {
 
 void playOdeToJoy() {
     // Sequence of notes for Ode to Joy in C major
-    C_Octave_Notes melody[] = {
-        E4, E4, F4, G4, G4, F4, E4, D4,
-        C4, C4, D4, E4, E4, D4, D4,
-			
-        E4, E4, F4, G4, G4, F4, E4, D4,
-        C4, C4, D4, E4, D4, C4, C4,
-			
-        D4, D4, E4, C4, D4, E4, F4, E4, C4,
-        D4, E4, F4, E4, D4, C4, D4, G3,
-			
-        E4, E4, F4, G4, G4, F4, E4, D4,
-        C4, C4, D4, E4, D4, C4, C4
-    };
+
 		
-		NoteDuration noteDurations[] = {
-			QUARTER, QUARTER, QUARTER, QUARTER, // E4, E4, F4, G4
-			QUARTER, QUARTER, QUARTER, QUARTER, // G4, F4, E4, D4
-			QUARTER, QUARTER, QUARTER, QUARTER, // C4, C4, D4, E4
-			QUARTER, QUARTER, HALF,          // E4, D4, D4
-
-			QUARTER, QUARTER, QUARTER, QUARTER, // E4, E4, F4, G4
-			QUARTER, QUARTER, QUARTER, QUARTER, // G4, F4, E4, D4
-			QUARTER, QUARTER, QUARTER, QUARTER, // C4, C4, D4, E4
-			QUARTER, QUARTER, HALF,          // D4, C4, C4
-
-			QUARTER, QUARTER, QUARTER, QUARTER, // D4, D4, E4, C4
-			QUARTER, EIGHTH, EIGHTH, QUARTER, // D4, E4, F4, E4
-			QUARTER, QUARTER, EIGHTH, EIGHTH, QUARTER,  // C4, D4, E4, F4, E4, G3
-			QUARTER, QUARTER, QUARTER,QUARTER, //D4, C4, D4, G3,
-			
-			
-			QUARTER, QUARTER, QUARTER, QUARTER, // E4, E4, F4, G4
-			QUARTER, QUARTER, QUARTER, QUARTER, // G4, F4, E4, D4
-			QUARTER, QUARTER, QUARTER, QUARTER, // C4, C4, D4, E4
-			QUARTER, QUARTER, HALF          // D4, C4, C4
-	};
 
 
     // Note durations (1 = short, 2 = medium, 3 = long)
@@ -160,7 +103,7 @@ void playOdeToJoy() {
         setFreq(melody[i]); // Set frequency for the current note
 
         // Adjust delay based on note duration for better cadence
-				led_control(RED);
+
 				switch(noteDurations[i]){
 						case QUARTER:
 								//delay2(25000);
@@ -176,7 +119,6 @@ void playOdeToJoy() {
 								break;
 						default:
 								// handle other cases if necessary
-								offRGB();
 								break;
 				}
 				TPM1_C0V = 0;
