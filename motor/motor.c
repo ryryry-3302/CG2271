@@ -5,8 +5,29 @@
 # define RF 4 //PortA pin 4
 # define RB 5 //PortA pin 5
 
+# define RIGHT_FORWARD TPM0_C4V
+# define RIGHT_REVERSE TPM0_C5V
+# define LEFT_FORWARD	 TPM0_C2V
+# define LEFT_REVERSE  TPM0_C1V 
+
+
+
+
 # define MOD_VALUE 7500 //Up to 16 bits
 # define CALC_CNV(x) ((MOD_VALUE*x)/100) //Input is duty cycle in %
+
+void turnRight(int speed){
+		TPM0_C5V = CALC_CNV(speed); // Right Forward
+		TPM0_C4V = CALC_CNV(0); // Right Reverse
+		TPM0_C2V = CALC_CNV(speed); // Left Reverse
+		TPM0_C1V = CALC_CNV(0); // Left Forward
+}
+void turnLeft(int speed){
+		TPM0_C4V = CALC_CNV(speed); //
+		TPM0_C5V = CALC_CNV(0); // 
+		TPM0_C1V = CALC_CNV(speed); // 
+		TPM0_C2V = CALC_CNV(0); // 
+}
 
 void initMotors(){
 	//Enable clock to Port C & A
@@ -64,14 +85,82 @@ void initMotors(){
 	TPM0_C1V = CALC_CNV(0);
 	TPM0_C2V = CALC_CNV(0);
 }
+enum Direction {
+	NORTHEAST = 0,
+	EASTSOUTH = 1,
+	SOUTHWEST = 2,
+	WESTNORTH = 3 
+};
 
-void move(int x, int y){
-		TPM0_C4V = CALC_CNV(100); // Right Forward
-		TPM0_C5V = CALC_CNV(0); // Right Reverse
-		TPM0_C1V = CALC_CNV(50); // Left Reverse
-		TPM0_C2V = CALC_CNV(0); // Left Forward
+
+void move(int movebits){
+    // Scale x and y to range -3 to 3 (centered at 0)
+		int direction = ((movebits >> 2) % 4);
+		int speed = ((movebits >> 4) * 100 /3) ;
+		int ratio = (movebits % 4);
+		int weakspeed;
+	
+		switch(direction){
+			case NORTHEAST:
+					weakspeed = ((4 - ratio) * speed)/4;
+					LEFT_FORWARD = CALC_CNV(speed);
+					LEFT_REVERSE = CALC_CNV(0);
+					
+					RIGHT_FORWARD = CALC_CNV(weakspeed);
+					RIGHT_REVERSE = CALC_CNV(0);
+				break;
+			case EASTSOUTH:
+					weakspeed = ((ratio) * speed)/4;
+					RIGHT_FORWARD = CALC_CNV(0);
+					if (weakspeed == 0){
+						turnRight(speed);
+					}
+					else {
+						LEFT_FORWARD = CALC_CNV(0);
+						LEFT_REVERSE = CALC_CNV(speed);
+						RIGHT_REVERSE = CALC_CNV(weakspeed);
+					}
+				
+				break;
+			case SOUTHWEST:
+					weakspeed = ((4 - ratio) * speed)/4;
+					RIGHT_FORWARD = CALC_CNV(0);
+					RIGHT_REVERSE = CALC_CNV(speed);
+					
+					LEFT_FORWARD = CALC_CNV(0);
+					LEFT_REVERSE = CALC_CNV(weakspeed);
+				break;
+			case WESTNORTH:
+			
+					weakspeed = ((ratio) * speed)/4;
+					if (weakspeed == 0){
+						turnLeft(speed);
+					}
+					else {
+
+						RIGHT_FORWARD = CALC_CNV(speed);
+						RIGHT_REVERSE = CALC_CNV(0);
+						
+						LEFT_FORWARD = CALC_CNV(weakspeed);
+						LEFT_REVERSE = CALC_CNV(0);
+					}
+					
+				break;	
+			
+		}
+		
 }
 
+
+
+
+
+void stop (){
+		TPM0_C4V = CALC_CNV(0); // Right Forward
+		TPM0_C5V = CALC_CNV(0); // Right Reverse
+		TPM0_C1V = CALC_CNV(0); // Left Reverse
+		TPM0_C2V = CALC_CNV(0); // Left Forward
+}
 /*
 int main(void)
 {
