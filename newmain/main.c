@@ -16,12 +16,16 @@ const osThreadAttr_t priorityAbNormal = {
 };
 const osThreadAttr_t priorityHigh = {
   .priority = osPriorityHigh,
-	.stack_size = 1024
+	.stack_size = 512
 };
 const osThreadAttr_t priorityMax = {
   .priority = osPriorityRealtime
 };
 
+const osThreadAttr_t priorityHighled = {
+  .priority = osPriorityHigh,
+	.stack_size = 128
+};
 enum State state = RUNNING;
 
 void play_music_thread (void *argument) {
@@ -29,24 +33,27 @@ void play_music_thread (void *argument) {
   // ...
   for (;;) {
 		playOdeToJoy();
-
 	}
 }
 
 void move_thread (void*argument) {
 	
 	  for (;;) {
-				for (int i =48; i<=63; i++){
-					move(i);
-					osDelay(300);
-					stop();
-					osDelay(4000);
-		
-				}
-
+			move(48);
 		}
 }
 
+void front_green_led_thread (void*argument) {
+		for (;;){
+			greenLEDControl(state);
+		}
+}
+
+void back_red_led_thread (void*argument) {
+		for (;;){
+			redLEDControl(state);		
+		}
+}
  
 int main (void) {
  
@@ -54,12 +61,17 @@ int main (void) {
   SystemCoreClockUpdate();
 	initPWM();
 	initMotors();
+	initLEDs();
 	//InitGPIO();
   // 
 	musicSem = osSemaphoreNew(1, 1, NULL);
   osKernelInitialize();                 // Initialize CMSIS-RTOS
+
   osThreadNew(play_music_thread, NULL, &priorityHigh);    // Create application main thread
-	osThreadNew(move_thread, NULL, &priorityHigh);  
+	osThreadNew(move_thread, NULL, &priorityHigh);
+	osThreadNew(back_red_led_thread, NULL, &priorityHighled);
+	osThreadNew(front_green_led_thread, NULL, &priorityHighled);
+
   osKernelStart();                      // Start thread execution
 	for (;;) {
 	}
