@@ -46,4 +46,7 @@ void initMotors(void);
 void move(int movedata);
 void stop(void);
 
-//Debug LEDs
+//Front and Back Helpers
+void initLEDs(void);
+void greenLEDControl(enum State state);
+void redLEDControl(enum State state);
