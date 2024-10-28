@@ -16,8 +16,13 @@ const throttle = (func) => {
     };
 };
 
-export const sendCoordinates = throttle(async (x, y, serverIP) => {
-    const response = await axios.get(`${serverIP}/x=${x}/y=${y}`);
+// export const sendCoordinates = throttle(async (x, y, serverIP) => {
+//     const response = await axios.get(`${serverIP}/x=${x}/y=${y}`);
+//     return response.data;
+// });
+
+export const sendCode = throttle(async (code, serverIP) => {
+    const response = await axios.get(`${serverIP}/?code=${code}`);
     return response.data;
 });
 

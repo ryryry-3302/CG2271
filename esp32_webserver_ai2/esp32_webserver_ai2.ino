@@ -93,15 +93,14 @@ void loop() {
   String req = client.readStringUntil('\r');
   // Serial.println(req);
 
+
+
   // Make the client's request.
-  int x_coord = req.substring(req.indexOf("x=")+2, req.indexOf("/y=")).toInt();
-  int y_coord = req.substring(req.indexOf("y=")+2).toInt();
+  int code = req.substring(req.indexOf("?code=")+6).toInt();
 
   digitalWrite(output26, HIGH);
-  int shifted_y_coord = y_coord << 0; 
-  int shifted_x_coord = x_coord << 3;
+  int shifted_code = code << 0; 
 
-  int x_y_encoding = shifted_y_coord | shifted_x_coord;  // Bitwise OR the shifted coordinates
 
   int buzzer_encoding;
   if(req.indexOf("buzzer") != -1)
@@ -113,7 +112,7 @@ void loop() {
     buzzer_encoding = 0 << 7;
   }
 
-  int finalEncoding = x_y_encoding | buzzer_encoding;
+  int finalEncoding = shifted_code | buzzer_encoding;
 
 
   Serial2.write(finalEncoding);
