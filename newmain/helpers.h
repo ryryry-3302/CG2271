@@ -50,3 +50,4 @@ void stop(void);
 void initLEDs(void);
 void greenLEDControl(enum State state);
 void redLEDControl(enum State state);
+void initUART2 (uint32_t baud_rate);
