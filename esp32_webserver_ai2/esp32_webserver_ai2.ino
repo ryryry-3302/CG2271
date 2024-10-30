@@ -1,7 +1,6 @@
-// Load Wi-Fi library
 #include <WiFi.h>                         
 
-#define RXD2 16
+#define RXD2 16 
 #define TXD2 17
 
 // Replace with your network credentials
@@ -37,7 +36,7 @@ IPAddress primaryDNS(8, 8, 8, 8);
 IPAddress secondaryDNS(8, 8, 4, 4); 
 
 void setup() {
-  Serial.begin(9600);
+  // Serial.begin(9600);
   Serial2.begin(9600, SERIAL_8N1, RXD2, TXD2);
   // Initialize the output variables as outputs
   pinMode(output26, OUTPUT);
@@ -51,33 +50,33 @@ void setup() {
   //}
 
   // Connect to Wi-Fi network with SSID and password
-  Serial.print("Connecting to ");
-  Serial.println(ssid);
+  // Serial.print("Connecting to ");
+  // Serial.println(ssid);
   WiFi.begin(ssid, password);
 
-  // Print local IP address and start web server
-  Serial.println("");
-  Serial.println("WiFi connected.");
-  Serial.println("IP address: ");
+  // // Print local IP address and start web server
+  // Serial.println("");
+  // Serial.println("WiFi connected.");
+  // Serial.println("IP address: ");
   ip_address = WiFi.localIP().toString();
-  Serial.println(ip_address);
+  // Serial.println(ip_address);
   server.begin();
 }
 
 void loop() {
-
+  try{
 // If disconnected, try to reconnect every 30 seconds.
-  // if ((WiFi.status() != WL_CONNECTED) && (millis() > wait30)) {
-  //   Serial.println("Trying to reconnect WiFi...");
-  //   WiFi.disconnect();
-  //   WiFi.begin(ssid, password);
-  //   wait30 = millis() + 30000;
-  // } 
-  // // Check if a client has connected..
-  // WiFiClient client = server.available();
-  // if (!client) {
-  //   return;
-  // }
+  if ((WiFi.status() != WL_CONNECTED) && (millis() > wait30)) {
+    Serial.println("Trying to reconnect WiFi...");
+    WiFi.disconnect();
+    WiFi.begin(ssid, password);
+    wait30 = millis() + 30000;
+  } 
+  // Check if a client has connected..
+  WiFiClient client = server.available();
+  if (!client) {
+    return;
+  }
    
   // Serial.print("New client: ");
   // Serial.println(client.remoteIP());
@@ -134,6 +133,9 @@ void loop() {
   client.println(response); //  Return status.
 
   client.flush();
+  } catch (const char* e){
+
+  }
   // client.stop();
   // Serial.println();
 }
