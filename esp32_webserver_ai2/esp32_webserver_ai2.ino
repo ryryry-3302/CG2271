@@ -1,11 +1,12 @@
+// Load Wi-Fi library
 #include <WiFi.h>                         
 
-#define RXD2 16 
+#define RXD2 16
 #define TXD2 17
 
 // Replace with your network credentials
-const char* ssid = "blueberry1";
-const char* password = "peepeepoopoo";
+const char* ssid = "ISD Surveillance Van";
+const char* password = "I love Shanmugam";
 
 // Set web server port number to 80
 WiFiServer server(80);

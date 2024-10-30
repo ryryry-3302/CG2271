@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import './App.css'
-import { sendBuzzer, sendCode } from './serverCommands'
+import { sendBuzzer, sendCode, sendHardStop } from './serverCommands'
 import { Joystick } from 'react-joystick-component';
 
 function App() {
@@ -16,14 +16,21 @@ function App() {
         // setspeed(Math.round((e.x+1) * 3))
         // setangle(Math.round((e.y+1) * 3.5))
         const codeToSend = calculateCode(e.x, e.y)
-        if (codeToSend != oldCode) {
-            setOldCode(sendCode(codeToSend, serverIP))
+        if (true) {
+            (sendCode(codeToSend, serverIP))
         } else {
             console.log("No change")
         }
     }
 
     const sqrt2 = Math.sqrt(2);
+
+    const speedMapping = {
+        1: 1,
+        2: 2,
+        3: 4,
+        4: 4
+        }
 
     const calculateCode = (x, y) => {
         //a number from 0 to 63
@@ -40,16 +47,26 @@ function App() {
         return Math.min(63, code)
     }
 
-    const handleStop = () => {
+    const handleStop = (e) => {
         setSpeed(0)
         setAngle(0)
         calculateCode(0, 0)
-
-        let sendCodeThing = sendCode(0, serverIP)
-        while (sendCodeThing === false){
-            //to make sure stop is sent
-            sendCodeThing = sendCode(0, serverIP)
+        sendHardStop(serverIP)
+        const codeToSend = calculateCode(e.x, e.y)
+        if (true) {
+            (sendCode(codeToSend, serverIP))
+        } else {
+            console.log("No change")
         }
+        sendHardStop(serverIP)
+        setTimeout(sendHardStop(serverIP), 25)
+        setTimeout(sendHardStop(serverIP), 50)
+
+        // let sendCodeThing = sendCode(0, serverIP)
+        // while (sendCodeThing === false){
+        //     //to make sure stop is sent
+        //     sendCodeThing = sendCode(0, serverIP)
+        // }
     }
 
     const handleBuzzer = () => {
@@ -71,10 +88,16 @@ function App() {
         setServerIP(e.target.value)
         console.log(serverIP)
     }
+    const backgroundStyle = {
+        backgroundImage: `url('https://static01.nyt.com/images/2016/05/30/us/30gorilla-web1/30gorilla-web1-superJumbo.jpg')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+    };
 
     return (
         <>
-            <div className='bg-yellow-500 h-screen w-screen p-16 flex flex-col justify-center items-center'>
+            <div className='bg-yellow-500 h-screen w-screen p-16 flex flex-col justify-center items-center' style={backgroundStyle}>
                 <input 
                     type="text" 
                     value={serverIP} 
@@ -83,7 +106,7 @@ function App() {
                     className='mb-4 p-2 text-lg rounded-md'
                 />
                 <div className='flex justify-center items-center h-fit'>
-                    <Joystick size={200} sticky={false} baseColor="red" stickColor="blue" move={handleMove} stop={handleStop}></Joystick>
+                    <Joystick size={288 } sticky={false} baseColor="red" stickColor="blue" move={handleMove} stop={(e)=>{handleStop(e)}} stickSize={50} ></Joystick>
                 </div>
                 <div className='text-white text-7xl text-center'>
                     s: {speed} a: {angle} code: {joyStickCode}
