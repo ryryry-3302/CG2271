@@ -102,7 +102,7 @@ void move(int movebits){
 	
 		switch(direction){
 			case NORTHEAST:
-					weakspeed = ((4 - ratio) * speed)/4;
+					weakspeed = ((4 - ratio) * speed)/(4*5);
 					LEFT_FORWARD = CALC_CNV(speed);
 					LEFT_REVERSE = CALC_CNV(0);
 					
@@ -110,7 +110,7 @@ void move(int movebits){
 					RIGHT_REVERSE = CALC_CNV(0);
 				break;
 			case EASTSOUTH:
-					weakspeed = ((ratio) * speed)/4;
+					weakspeed = ((ratio) * speed)/(4/5);
 					RIGHT_FORWARD = CALC_CNV(0);
 					if (weakspeed == 0){
 						turnRight(speed);
@@ -123,7 +123,7 @@ void move(int movebits){
 				
 				break;
 			case SOUTHWEST:
-					weakspeed = ((4 - ratio) * speed)/4;
+					weakspeed = ((4 - ratio) * speed)/(4*5);
 					RIGHT_FORWARD = CALC_CNV(0);
 					RIGHT_REVERSE = CALC_CNV(speed);
 					
@@ -132,7 +132,7 @@ void move(int movebits){
 				break;
 			case WESTNORTH:
 			
-					weakspeed = ((ratio) * speed)/4;
+					weakspeed = ((ratio) * speed)/(4*5);
 					if (weakspeed == 0){
 						turnLeft(speed);
 					}
