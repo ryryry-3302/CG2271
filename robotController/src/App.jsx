@@ -10,11 +10,17 @@ function App() {
     const [joyStickCode, setJoyStickCode] = useState(0)
     const [isBuzzerSpinning, setIsBuzzerSpinning] = useState(false)
     const [serverIP, setServerIP] = useState('')
+    const [oldCode, setOldCode] = useState(0)
 
     const handleMove = (e) => {
         // setspeed(Math.round((e.x+1) * 3))
         // setangle(Math.round((e.y+1) * 3.5))
-        sendCode(calculateCode(e.x, e.y), serverIP)
+        const codeToSend = calculateCode(e.x, e.y)
+        if (codeToSend != oldCode) {
+            setOldCode(sendCode(codeToSend, serverIP))
+        } else {
+            console.log("No change")
+        }
     }
 
     const sqrt2 = Math.sqrt(2);
@@ -31,13 +37,19 @@ function App() {
         setJoyStickCode(code)
         setSpeed(speed_scaled)
         setAngle(scaled_angle)
-        return code
+        return Math.min(63, code)
     }
 
     const handleStop = () => {
         setSpeed(0)
         setAngle(0)
-        sendCode(0, serverIP)   
+        calculateCode(0, 0)
+
+        let sendCodeThing = sendCode(0, serverIP)
+        while (sendCodeThing === false){
+            //to make sure stop is sent
+            sendCodeThing = sendCode(0, serverIP)
+        }
     }
 
     const handleBuzzer = () => {
@@ -57,6 +69,7 @@ function App() {
       
     const handleIPChange = (e) => {
         setServerIP(e.target.value)
+        console.log(serverIP)
     }
 
     return (
@@ -65,7 +78,7 @@ function App() {
                 <input 
                     type="text" 
                     value={serverIP} 
-                    onChange={handleIPChange} 
+                    onChange={handleIPChange}
                     placeholder="Enter server IP address"
                     className='mb-4 p-2 text-lg rounded-md'
                 />

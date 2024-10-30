@@ -54,10 +54,7 @@ void setup() {
   Serial.print("Connecting to ");
   Serial.println(ssid);
   WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
+
   // Print local IP address and start web server
   Serial.println("");
   Serial.println("WiFi connected.");
@@ -70,20 +67,20 @@ void setup() {
 void loop() {
 
 // If disconnected, try to reconnect every 30 seconds.
-  if ((WiFi.status() != WL_CONNECTED) && (millis() > wait30)) {
-    Serial.println("Trying to reconnect WiFi...");
-    WiFi.disconnect();
-    WiFi.begin(ssid, password);
-    wait30 = millis() + 30000;
-  } 
-  // Check if a client has connected..
-  WiFiClient client = server.available();
-  if (!client) {
-    return;
-  }
+  // if ((WiFi.status() != WL_CONNECTED) && (millis() > wait30)) {
+  //   Serial.println("Trying to reconnect WiFi...");
+  //   WiFi.disconnect();
+  //   WiFi.begin(ssid, password);
+  //   wait30 = millis() + 30000;
+  // } 
+  // // Check if a client has connected..
+  // WiFiClient client = server.available();
+  // if (!client) {
+  //   return;
+  // }
    
-  Serial.print("New client: ");
-  Serial.println(client.remoteIP());
+  // Serial.print("New client: ");
+  // Serial.println(client.remoteIP());
    
   // Espera hasta que el cliente envíe datos.
   // while(!client.available()){ delay(1); }
@@ -116,8 +113,8 @@ void loop() {
 
 
   Serial2.write(finalEncoding);
-  Serial.println("FINAL ENCODING BELOW:");   
-  Serial.println(finalEncoding);
+  // Serial.println("FINAL ENCODING BELOW:");   
+  // Serial.println(finalEncoding);
 
   /*
        if (req.indexOf("on12") != -1) {digitalWrite(LED12, HIGH); estado = "LED12 ON";}
@@ -137,6 +134,6 @@ void loop() {
   client.println(response); //  Return status.
 
   client.flush();
-  client.stop();
-  Serial.println("Client disconnected.");
+  // client.stop();
+  // Serial.println();
 }
