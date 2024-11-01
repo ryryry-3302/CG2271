@@ -29,19 +29,16 @@ Project File Date:  10/30/2024
 Rebuild target 'Target 1'
 compiling RTX_Config.c...
 compiling rtx_lib.c...
-assembling startup_MKL25Z4.s...
 compiling pwm.c...
+assembling startup_MKL25Z4.s...
+compiling led.c...
 compiling main.c...
 compiling uart.c...
 compiling motor.c...
-..\motor\motor.c(113): warning:  #39-D: division by zero
-  					weakspeed = ((ratio) * speed)/(4/5);
-..\motor\motor.c: 1 warning, 0 errors
-compiling led.c...
 compiling system_MKL25Z4.c...
 linking...
-Program Size: Code=9756 RO-data=640 RW-data=5480 ZI-data=264  
-".\Objects\myRTX.axf" - 0 Error(s), 1 Warning(s).
+Program Size: Code=9872 RO-data=640 RW-data=5480 ZI-data=264  
+".\Objects\myRTX.axf" - 0 Error(s), 0 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -77,25 +74,25 @@ Package Vendor: Keil
 
    * Component: ARM::CMSIS:RTOS2:Keil RTX5:Library:5.5.1
       Include file:  CMSIS\RTOS2\RTX\Include\rtx_os.h
-      Include file:  CMSIS\RTOS2\RTX\Config\RTX_Config.h
-      Source file:   CMSIS\RTOS2\RTX\Template\svc_user.c
-      Source file:   CMSIS\RTOS2\RTX\Config\RTX_Config.c
-      Source file:   CMSIS\RTOS2\RTX\Template\Events.c
-      Source file:   CMSIS\RTOS2\RTX\Template\main.c
-      Source file:   CMSIS\RTOS2\RTX\Template\Thread.c
-      Library file:  CMSIS\RTOS2\RTX\Library\ARM\RTX_CM0.lib
-      Source file:   CMSIS\RTOS2\RTX\Template\Timer.c
-      Source file:   CMSIS\RTOS2\RTX\Template\MsgQueue.c
-      Source file:   CMSIS\RTOS2\RTX\Template\MemPool.c
-      Source file:   CMSIS\RTOS2\RTX\Template\Mutex.c
       Source file:   CMSIS\RTOS2\RTX\Template\Semaphore.c
       Source file:   CMSIS\RTOS2\RTX\Source\rtx_lib.c
+      Source file:   CMSIS\RTOS2\RTX\Template\MemPool.c
+      Source file:   CMSIS\RTOS2\RTX\Template\Timer.c
+      Source file:   CMSIS\RTOS2\RTX\Template\Thread.c
+      Include file:  CMSIS\RTOS2\RTX\Config\RTX_Config.h
+      Source file:   CMSIS\RTOS2\RTX\Template\Mutex.c
+      Source file:   CMSIS\RTOS2\RTX\Template\svc_user.c
+      Source file:   CMSIS\RTOS2\RTX\Template\MsgQueue.c
+      Library file:  CMSIS\RTOS2\RTX\Library\ARM\RTX_CM0.lib
+      Source file:   CMSIS\RTOS2\RTX\Config\RTX_Config.c
+      Source file:   CMSIS\RTOS2\RTX\Template\main.c
+      Source file:   CMSIS\RTOS2\RTX\Template\Events.c
 
    * Component: Keil::Device:Startup:2.5.0
-      Source file:   Device\Source\ARM\startup_MKL25Z4.s
       Include file:  Device\Source\system_MKL25Z4.h
       Source file:   Device\Source\system_MKL25Z4.c
-Build Time Elapsed:  00:00:01
+      Source file:   Device\Source\ARM\startup_MKL25Z4.s
+Build Time Elapsed:  00:00:03
 </pre>
 </body>
 </html>
