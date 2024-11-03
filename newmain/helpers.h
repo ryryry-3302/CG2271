@@ -23,23 +23,31 @@ typedef enum {
 
 //Music Helpers
 typedef enum {
+		F3 = 175,
 		G3 = 196,
+		GS3 = 208,
+		AS3 = 233,
     C4 = 261,
     D4 = 294,
+		DS4 = 311,
     E4 = 330,
     F4 = 349,
     G4 = 392,
     A4 = 440,
     B4 = 494
 } C_Octave_Notes;
+
 typedef enum {
-    EIGHTH = 1,
-    QUARTER = 2,
-    HALF = 4
+    EIGHTH = (uint8_t)1,
+    QUARTER = (uint8_t)2,
+		QUARTERPLUS = (uint8_t)3,
+    HALF = (uint8_t)4
 } NoteDuration;
+
 void setFreq(C_Octave_Notes note);
 void initPWM(void);
 void playOdeToJoy(void);
+void playEnding(void);
 
 //Motor Helpers
 void initMotors(void);

@@ -31,7 +31,8 @@ const osThreadAttr_t priorityHigh = {
 	.stack_size = 512
 };
 const osThreadAttr_t priorityMax = {
-  .priority = osPriorityRealtime
+  .priority = osPriorityRealtime,
+	.stack_size = 512
 };
 
 const osThreadAttr_t priorityHighled = {
@@ -55,8 +56,9 @@ void decoder_thread (void *argument) {
 		if(data % 64 != movement_data){
 			movement_data = data % 64;
 		};
-		if(data > 63){
-			currentstate = FINISHED;
+		if(currentstate == FINISHED ||data > 63){
+			playEnding();
+			currentstate = FINISHED;			
 		}
 		else if(movement_data > 16){
 			currentstate = RUNNING;
@@ -96,7 +98,7 @@ int main (void) {
 
 	musicSem = osSemaphoreNew(1, 1, NULL);
   osKernelInitialize();                 // Initialize CMSIS-RTOS
-	osThreadNew(decoder_thread, NULL, &priorityHigh);
+	osThreadNew(decoder_thread, NULL, &priorityMax);
   osThreadNew(play_music_thread, NULL, &priorityHigh);    // Create application main thread
 	osThreadNew(move_thread, NULL, &priorityHigh);
 	osThreadNew(back_red_led_thread, NULL, &priorityHighled);

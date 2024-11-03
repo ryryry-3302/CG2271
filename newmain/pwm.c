@@ -28,7 +28,7 @@ C_Octave_Notes melody[] = {
 		C4, C4, D4, E4, D4, C4, C4
 };
 
-NoteDuration noteDurations[] = {
+uint8_t noteDurations[] = {
 	QUARTER, QUARTER, QUARTER, QUARTER, // E4, E4, F4, G4
 	QUARTER, QUARTER, QUARTER, QUARTER, // G4, F4, E4, D4
 	QUARTER, QUARTER, QUARTER, QUARTER, // C4, C4, D4, E4
@@ -130,5 +130,52 @@ void playOdeToJoy() {
         // Small pause between notes
     }
 }
+C_Octave_Notes melodyPumped[] = {
+    F3, F3, F3, G3,
+    GS3, GS3, AS3, C4, DS4,
+    DS4, DS4, C4, AS3,
+    AS3, AS3, G3, GS3
+};
 
+uint8_t pumpedDurations[] = {
+	QUARTERPLUS,QUARTER,EIGHTH,QUARTER,
+	QUARTERPLUS,QUARTER,EIGHTH,QUARTER,
+	QUARTERPLUS,QUARTER,EIGHTH,QUARTER,
+	QUARTERPLUS,QUARTER,EIGHTH, EIGHTH, EIGHTH
+};
 
+void playEnding() {
+  osSemaphoreAcquire(musicSem, osWaitForever);
+  for (int i = 0; i <17; i++) {
+        setFreq(melodyPumped[i]); // Set frequency for the current note
+
+        // Adjust delay based on note duration for better cadence
+
+				switch(pumpedDurations[i]){
+						case QUARTERPLUS:
+								osDelay(300);
+								break;
+						case QUARTER:
+								//delay2(25000);
+								osDelay(200);
+								break;
+						case HALF:
+								//delay2(50000);
+								osDelay(400);
+								break;
+						case EIGHTH:
+								//delay2(12500);
+								osDelay(100);
+								break;
+						default:
+								// handle other cases if necessary
+								break;
+				}
+				TPM1_C0V = 0;
+				osDelay(10);
+			
+				
+        // Small pause between notes
+    }
+  osSemaphoreRelease(musicSem);
+}
