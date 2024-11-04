@@ -28,7 +28,7 @@ C_Octave_Notes melody[] = {
 		C4, C4, D4, E4, D4, C4, C4
 };
 
-NoteDuration noteDurations[] = {
+uint8_t noteDurations[] = {
 	QUARTER, QUARTER, QUARTER, QUARTER, // E4, E4, F4, G4
 	QUARTER, QUARTER, QUARTER, QUARTER, // G4, F4, E4, D4
 	QUARTER, QUARTER, QUARTER, QUARTER, // C4, C4, D4, E4
@@ -56,7 +56,7 @@ NoteDuration noteDurations[] = {
 
 void setFreq(C_Octave_Notes note) {
     TPM1->MOD = FREQ_2_MOD(note);
-    TPM1_C0V = (FREQ_2_MOD(note)) / 12;
+    TPM1_C0V = (FREQ_2_MOD(note)) / 6;
 }
 
 /* Initialize PWM */
@@ -77,7 +77,7 @@ void initPWM(void) {
 
     // Set initial frequency
     setFreq(G4);
-
+		
     // Set TPM1 to edge-aligned PWM, up-counting mode
     TPM1->SC &= ~((TPM_SC_CMOD_MASK) | (TPM_SC_PS_MASK));
     TPM1->SC |= (TPM_SC_PS(7));  // Set prescaler to 128
@@ -86,22 +86,15 @@ void initPWM(void) {
     // Configure TPM1 Channel 0 for edge-aligned PWM (high-true pulses)
     TPM1_C0SC &= ~((TPM_CnSC_ELSB_MASK) | (TPM_CnSC_ELSA_MASK) | (TPM_CnSC_MSB_MASK) | (TPM_CnSC_MSA_MASK));
     TPM1_C0SC |= (TPM_CnSC_ELSB(1) | TPM_CnSC_MSB(1));  // High-true pulses
+		TPM1_C0V = 0;
 }
 
 
 void playOdeToJoy() {
-    // Sequence of notes for Ode to Joy in C major
-
-		
-
-
-    // Note durations (1 = short, 2 = medium, 3 = long)
-
-    // Play the melody
     for (int i = 0; i <63; i++) {
 				osSemaphoreAcquire(musicSem, osWaitForever);
         setFreq(melody[i]); // Set frequency for the current note
-
+				osSemaphoreRelease(musicSem);
         // Adjust delay based on note duration for better cadence
 
 				switch(noteDurations[i]){
@@ -122,13 +115,58 @@ void playOdeToJoy() {
 								break;
 				}
 				TPM1_C0V = 0;
-				
-				osSemaphoreRelease(musicSem);
 				osDelay(10);
-			
+				
 				
         // Small pause between notes
     }
 }
+C_Octave_Notes melodyPumped[] = {
+    F3, F3, F3, G3,
+    GS3, GS3, AS3, C4, DS4,
+    DS4, DS4, C4, AS3,
+    AS3, AS3, G3, GS3
+};
 
+uint8_t pumpedDurations[] = {
+	QUARTERPLUS,QUARTER,EIGHTH,QUARTER,
+	QUARTERPLUS,QUARTER,EIGHTH,QUARTER,
+	QUARTERPLUS,QUARTER,EIGHTH,QUARTER,
+	QUARTERPLUS,QUARTER,EIGHTH, EIGHTH, EIGHTH
+};
 
+void playEnding() {
+  
+  for (int i = 0; i <17; i++) {
+				
+        setFreq(melodyPumped[i]); // Set frequency for the current note
+
+        // Adjust delay based on note duration for better cadence
+
+				switch(pumpedDurations[i]){
+						case QUARTERPLUS:
+								osDelay(300*2);
+								break;
+						case QUARTER:
+								//delay2(25000);
+								osDelay(200*2);
+								break;
+						case HALF:
+								//delay2(50000);
+								osDelay(400*2);
+								break;
+						case EIGHTH:
+								//delay2(12500);
+								osDelay(100*2);
+								break;
+						default:
+								// handle other cases if necessary
+								break;
+				}
+				TPM1_C0V = 0;
+				osDelay(10);
+
+        // Small pause between notes
+    }
+  
+}

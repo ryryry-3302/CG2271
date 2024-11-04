@@ -21,6 +21,7 @@ osSemaphoreId_t brainSem, musicSem, moveSem;
     if (UART2->S1 & UART_S1_RDRF_MASK) {
         data = UART2->D;
     }
+		osSemaphoreRelease(brainSem);
 }
  
 const osThreadAttr_t priorityAbNormal = {
@@ -31,7 +32,8 @@ const osThreadAttr_t priorityHigh = {
 	.stack_size = 512
 };
 const osThreadAttr_t priorityMax = {
-  .priority = osPriorityRealtime
+  .priority = osPriorityRealtime,
+	.stack_size = 512
 };
 
 const osThreadAttr_t priorityHighled = {
@@ -41,10 +43,10 @@ const osThreadAttr_t priorityHighled = {
 enum State state = RUNNING;
 
 void play_music_thread (void *argument) {
- 
-  // ...
   for (;;) {
+
 		playOdeToJoy();
+		
 	}
 }
 
@@ -52,11 +54,17 @@ void decoder_thread (void *argument) {
  
   // ...
   for (;;) {
+		osSemaphoreAcquire(brainSem,osWaitForever);
 		if(data % 64 != movement_data){
 			movement_data = data % 64;
-		};
-		if(data > 63){
+		}
+		if(data > 63 || currentstate == FINISHED){
 			currentstate = FINISHED;
+			movement_data = 0;
+			osSemaphoreAcquire(musicSem, osWaitForever);
+			for (;;){
+			playEnding();
+			}
 		}
 		else if(movement_data > 16){
 			currentstate = RUNNING;
@@ -93,15 +101,14 @@ int main (void) {
 	initPWM();
 	initMotors();
 	initLEDs();
-
-	musicSem = osSemaphoreNew(1, 1, NULL);
-  osKernelInitialize();                 // Initialize CMSIS-RTOS
-	osThreadNew(decoder_thread, NULL, &priorityHigh);
+	osKernelInitialize();
+	brainSem = osSemaphoreNew(1, 1, NULL);
+	musicSem = osSemaphoreNew(1, 1, NULL);                 // Initialize CMSIS-RTOS
+	osThreadNew(decoder_thread, NULL, &priorityMax);
   osThreadNew(play_music_thread, NULL, &priorityHigh);    // Create application main thread
 	osThreadNew(move_thread, NULL, &priorityHigh);
 	osThreadNew(back_red_led_thread, NULL, &priorityHighled);
 	osThreadNew(front_green_led_thread, NULL, &priorityHighled);
-
   osKernelStart();                      // Start thread execution
 	for (;;) {
 	}
